@@ -32,11 +32,30 @@ This phishing campaign demonstrates direct infrastructure use of AEZA-hosted ass
 
 `#CyberSecurity` `#ThreatIntelligence` `#Phishing` `#Pastejacking` `#MalwareAnalysis` `#AEZAGroup` `#DeerStealer` `#BulletproofHosting` `#CTI` `#OFACSanctions`
 
+---
+
+## ⚠️ Disclaimer
+
+This repository is intended solely for **educational**, **research**, and **threat intelligence** purposes.
+
+It contains static analysis of a real-world phishing and malware campaign, including:
+- Deobfuscated command sequences
+- Indicators of compromise (IOCs)
+- Behavioral analysis
+- Infrastructure intelligence linked to publicly sanctioned entities
+
+No active malicious code or executable files are hosted here.  
+All payloads are either defanged, base64-encoded, or represented via static screenshots.
+
+By accessing or using this repository, you agree not to use its contents for any malicious, unlawful, or unethical purposes.
+
+> All research and commentary reflect the views of the author, Andrii Stepovyi, and are provided "as-is" without warranty.
+
+If you believe any content in this repository poses a risk or violates GitHub’s policies, please [open an issue](https://github.com/YOUR_USERNAME/YOUR_REPO/issues) or contact the repository owner directly.
 
 ---
 
-## ✍️ Author
+**© 2025 Andrii Stepovyi**  
+Security Consultant | Cyber Threat Intelligence Researcher | PenTester
 
-**Andrii Stepovyi**  
-Security Consultant | Cyber Threat Intelligence Researcher | PenTester  
-[LinkedIn Profile](https://www.linkedin.com/in/andrii-stepovyi/)  
+---
