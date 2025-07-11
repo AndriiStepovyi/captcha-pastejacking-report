@@ -21,8 +21,6 @@ The campaign was initially spotted and shared by [Christoph Jans](https://www.li
 
 - `index.html`: Full illustrated report with screenshots and technical breakdown
 - `/assets`: Folder containing malware screenshots, deobfuscated code, and network traces
-- `malicious_code.txt`: Raw payload retrieved by PowerShell
-- `decoded_payload.txt`: Base64-decoded and unpacked second-stage script
 - `ioc_list.txt`: Indicators of Compromise (domains, IPs, hashes)
 
 ## 📢 Background
