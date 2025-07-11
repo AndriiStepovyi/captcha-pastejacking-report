@@ -14,7 +14,7 @@ The campaign was initially spotted and shared by [Christoph Jans](https://www.li
 - **Malware Delivered**: Base64-encoded stealer (e.g., HijackLoader / DeerStealer)
 - **Persistence Mechanisms**: Registry edits, memory injection, folder cloaking
 - **Data Stolen**: Credentials, browser sessions, system information
-- **C2 Communication**: Exfiltration to `anodes.pro` and `aeza.network` infrastructure
+- **C2 Communication**: Exfiltration to `anodes[.]pro` and `aeza[.]network` infrastructure
 - **Attribution**: Russian-language code comments, link to OFAC-sanctioned AEZA
 
 ## 📎 Contents
