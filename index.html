@@ -404,7 +404,7 @@ Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to In
       <p>The attack begins with victims being redirected to a convincing Cloudflare CAPTCHA page hosted on the compromised domain <code>accarda.com</code>. The visual design closely mimics legitimate Cloudflare verification pages, exploiting user trust in this widely-recognized security mechanism.</p>
       
       <div class="image-container">
-        <img src="CloudFlare_CAPTCHA.png" alt="Fake Cloudflare CAPTCHA interface">
+        <img src="assets/CloudFlare_CAPTCHA.png" alt="Fake Cloudflare CAPTCHA interface">
         <div class="image-caption">
           <strong>Figure 1:</strong> Initial phishing lure - fake Cloudflare CAPTCHA page designed to establish trust
         </div>
@@ -420,7 +420,7 @@ Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to In
       </ul>
       
       <div class="image-container">
-        <img src="CloudFlare_CAPTCHA_Instructions-when-clicked.png" alt="Malicious instructions after CAPTCHA click">
+        <img src="assets/CloudFlare_CAPTCHA_Instructions-when-clicked.png" alt="Malicious instructions after CAPTCHA click">
         <div class="image-caption">
           <strong>Figure 2:</strong> Post-click instructions guiding users to execute clipboard content via Win+R
         </div>
@@ -439,7 +439,7 @@ Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to In
       <p>The core attack mechanism relies on JavaScript-based clipboard manipulation. When users interact with the fake CAPTCHA, malicious code silently copies a PowerShell command to their clipboard, priming the pastejacking attack.</p>
       
       <div class="image-container">
-        <img src="accarda.com_source_code.png" alt="Obfuscated source code">
+        <img src="assets/accarda.com_source_code.png" alt="Obfuscated source code">
         <div class="image-caption">
           <strong>Figure 3:</strong> Obfuscated JavaScript code responsible for clipboard manipulation
         </div>
@@ -456,7 +456,7 @@ function injectClipboard() {
       </div>
       
       <div class="image-container">
-        <img src="pastejacking_onclick_code.png" alt="Deobfuscated clipboard injection code">
+        <img src="assets/pastejacking_onclick_code.png" alt="Deobfuscated clipboard injection code">
         <div class="image-caption">
           <strong>Figure 4:</strong> Deobfuscated JavaScript showing clipboard injection on user interaction
         </div>
@@ -470,7 +470,7 @@ function injectClipboard() {
       </ul>
       
       <div class="image-container">
-        <img src="rus_instructions_in_code.png" alt="Russian comments in source code">
+        <img src="assets/rus_instructions_in_code.png" alt="Russian comments in source code">
         <div class="image-caption">
           <strong>Figure 5:</strong> Russian-language comments embedded in the malicious code
         </div>
@@ -508,7 +508,7 @@ function injectClipboard() {
       </div>
       
       <div class="image-container">
-        <img src="shodan_alababababa.cloud-77.110.118.195.jpg" alt="Shodan reconnaissance results">
+        <img src="assets/shodan_alababababa.cloud-77.110.118.195.jpg" alt="Shodan reconnaissance results">
         <div class="image-caption">
           <strong>Figure 6:</strong> Shodan intelligence revealing infrastructure connections to sanctioned hosting provider
         </div>
@@ -569,14 +569,14 @@ This infrastructure has been consistently linked to:</p>
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 171200.jpg" alt="PowerShell execution analysis">
+        <img src="assets/Screenshot 2025-06-25 171200.jpg" alt="PowerShell execution analysis">
         <div class="image-caption">
           <strong>Figure 7:</strong> PowerShell execution chain showing payload retrieval and component deployment
         </div>
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 171327.jpg" alt="Aurora executable behavior">
+        <img src="assets/Screenshot 2025-06-25 171327.jpg" alt="Aurora executable behavior">
         <div class="image-caption">
           <strong>Figure 8:</strong> EngineX-Aurora.exe behavioral analysis showing system reconnaissance activities
         </div>
@@ -594,7 +594,7 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folde
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 171436.jpg" alt="RaScope malicious behavior">
+        <img src="assets/Screenshot 2025-06-25 171436.jpg" alt="RaScope malicious behavior">
         <div class="image-caption">
           <strong>Figure 9:</strong> RaScope.exe conducting credential harvesting and system data collection
         </div>
@@ -613,21 +613,21 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folde
       <p>Network analysis reveals data exfiltration to <code>anodes.pro</code> via base64-encoded POST requests. IDS signatures confirm this as <span class="highlight">DeerStealer</span> malware activity.</p>
       
       <div class="image-container">
-        <img src="2025-07-10_whois_anodes.pro_registrant.png" alt="anades.pro ICANN registrant information" style="width: 50%; height: auto; display: block; margin: 0 auto;">
+        <img src="assets/2025-07-10_whois_anodes.pro_registrant.png" alt="anades.pro ICANN registrant information" style="width: 50%; height: auto; display: block; margin: 0 auto;">
         <div class="image-caption">
           <strong>Figure 10:</strong> anades.pro ICANN sketchy registrant information
         </div>
       </div>
 
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 191307.jpg" alt="DeerStealer detection">
+        <img src="assets/Screenshot 2025-06-25 191307.jpg" alt="DeerStealer detection">
         <div class="image-caption">
           <strong>Figure 11:</strong> IDS alert confirming DeerStealer malware family identification
         </div>
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 191345.jpg" alt="Network connections table">
+        <img src="assets/Screenshot 2025-06-25 191345.jpg" alt="Network connections table">
         <div class="image-caption">
           <strong>Figure 12:</strong> Network connections showing data exfiltration to command and control servers
         </div>
@@ -655,14 +655,14 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folde
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 191457.jpg" alt="Network traffic analysis">
+        <img src="assets/Screenshot 2025-06-25 191457.jpg" alt="Network traffic analysis">
         <div class="image-caption">
           <strong>Figure 13:</strong> Captured network stream showing base64-encoded data exfiltration
         </div>
       </div>
       
       <div class="image-container">
-        <img src="Screenshot 2025-06-25 192411.jpg" alt="Persistent backdoor analysis">
+        <img src="assets/Screenshot 2025-06-25 192411.jpg" alt="Persistent backdoor analysis">
         <div class="image-caption">
           <strong>Figure 15:</strong> Additional payload (build.exe) implementing persistent backdoor functionality
         </div>
