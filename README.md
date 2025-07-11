@@ -1,3 +1,5 @@
+> ⚠️ This repository is for educational and threat intelligence purposes only. No malicious functionality is hosted or executed here.
+
 # 🛡️ The CAPTCHA Deception: From Individual Phishing to International Crackdown
 
 ## Overview
@@ -32,6 +34,7 @@ This phishing campaign demonstrates direct infrastructure use of AEZA-hosted ass
 ## 🔖 Tags
 
 `#CyberSecurity` `#ThreatIntelligence` `#Phishing` `#Pastejacking` `#MalwareAnalysis` `#AEZAGroup` `#DeerStealer` `#BulletproofHosting` `#CTI` `#OFACSanctions`
+
 
 ---
 
